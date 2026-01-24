@@ -1,0 +1,135 @@
+version: "3.8"
+services:
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: tailscale
+    hostname: media-server
+    environment:
+      - TS_AUTHKEY=${TS_AUTHKEY}
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+      - TS_EXTRA_ARGS=--advertise-tags=tag:container
+    volumes:
+      - /home/victorvyrvoid/media-stack/config/tailscale:/var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    network_mode: host
+    restart: unless-stopped
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+      - WEBUI_PORT=8080
+    volumes:
+      - /home/victorvyrvoid/media-stack/config/qbittorrent:/config
+      - /home/victorvyrvoid/media-stack/downloads:/downloads
+    ports:
+      - "8080:8080"
+      - "6881:6881"
+      - "6881:6881/udp"
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+    restart: unless-stopped
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+    volumes:
+      - /home/victorvyrvoid/media-stack/config/prowlarr:/config
+    ports:
+      - "9696:9696"
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+    restart: unless-stopped
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+    volumes:
+      - /home/victorvyrvoid/media-stack/config/sonarr:/config
+      - /home/victorvyrvoid/Media/TV:/tv
+      - /home/victorvyrvoid/media-stack/downloads:/downloads
+    ports:
+      - "8989:8989"
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+    restart: unless-stopped
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+    volumes:
+      - /home/victorvyrvoid/media-stack/config/radarr:/config
+      - /home/victorvyrvoid/Media/Movies:/movies
+      - /home/victorvyrvoid/media-stack/downloads:/downloads
+    ports:
+      - "7878:7878"
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+    restart: unless-stopped
+
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+    volumes:
+      - /home/victorvyrvoid/media-stack/config/jellyfin:/config
+      - /home/victorvyrvoid/Media/TV:/data/tv
+      - /home/victorvyrvoid/Media/Movies:/data/movies
+    ports:
+      - "8096:8096"
+      - "8920:8920"
+      - "7359:7359/udp"
+      - "1900:1900/udp"
+    restart: unless-stopped
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=info
+      - TZ=Asia/Kolkata
+    ports:
+      - "8191:8191"
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+    restart: unless-stopped
+
+  requestrr:
+    image: thomst08/requestrr:latest
+    container_name: requestrr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Kolkata
+    volumes:
+      - /home/victorvyrvoid/media-stack/config/requestrr:/root/config
+    ports:
+      - "4545:4545"
+    restart: unless-stopped

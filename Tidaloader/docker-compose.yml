@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  tidaloader:
+    image: ghcr.io/rayz3r0/tidaloader:latest
+    container_name: tidaloader
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - MUSIC_DIR=/music
+      - AUTH_USERNAME=${USERNAME}
+      - AUTH_PASSWORD=${PASSWORD}
+      - MAX_CONCURRENT_DOWNLOADS=5
+      - QUEUE_AUTO_PROCESS=true
+    volumes:
+      - /Music:/music
+      - tidaloader_config:/config
+    ports:
+      - "8275:8001"
+    restart: unless-stopped
+
+volumes:
+  tidaloader_config:

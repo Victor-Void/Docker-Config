@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  watchtower:
+    image: ghcr.io/nicholas-fedor/watchtower:latest
+    container_name: watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_MONITOR_ONLY=true
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_INCLUDE_RESTARTING=true
+      - WATCHTOWER_INCLUDE_STOPPED=true
+      - WATCHTOWER_NOTIFICATIONS=shoutrrr
+      - WATCHTOWER_NOTIFICATION_URL=discord://TUWxXWhf5rc-Iabz2HVxkI_eYkjHE1hcOmICxY7YNFkFgRgS_pi_a5kcM3zFZtDOWZcB@1463721793142653091
+      - TZ=Asia/Kolkata
+    command:
+      - --interval
+      - "21600"
